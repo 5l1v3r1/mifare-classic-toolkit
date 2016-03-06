@@ -1,0 +1,6 @@
+[submodule "rfid"]
+	path = rfid
+	url = git@github.com:XaviTorello/rfid.git
+[submodule "RFID-RC522"]
+	path = RFID-RC522
+	url = git@github.com:XaviTorello/RFID-RC522.git
