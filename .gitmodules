@@ -4,3 +4,6 @@
 [submodule "RFID-RC522"]
 	path = RFID-RC522
 	url = git@github.com:XaviTorello/RFID-RC522.git
+[submodule "libnfc"]
+	path = libnfc
+	url = https://github.com/nfc-tools/libnfc.git
