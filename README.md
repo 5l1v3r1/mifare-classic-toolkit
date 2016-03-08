@@ -64,3 +64,4 @@ a0478cc39091
 * [How to Crack Mifare Classic Cards](https://firefart.at/post/how-to-crack-mifare-classic-cards/)
 * [BlackHat 2014 - Hacking Mifare Classic Cards](https://www.blackhat.com/docs/sp-14/materials/arsenal/sp-14-Almeida-Hacking-MIFARE-Classic-Cards-Slides.pdf)
 * [mfoc](https://github.com/nfc-tools/mfoc.git)
+* [MIFARE Classic 1K - Mainstream contactless](http://www.mouser.com/ds/2/302/MF1S503x-89574.pdf)
