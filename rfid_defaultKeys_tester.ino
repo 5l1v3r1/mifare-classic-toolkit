@@ -38,6 +38,7 @@ MFRC522 mfrc522(SS_PIN, RST_PIN);   // Create MFRC522 instance.
 // NOTE: Synchronize the NR_KNOWN_KEYS define with the defaultKeys[] array
 #define NR_KNOWN_KEYS   16
 byte knownKeys[NR_KNOWN_KEYS][MFRC522::MF_KEY_SIZE] =  {
+    {0xff, 0xff, 0xff, 0xff, 0xff, 0xff},  // FF FF FF FF FF FF
     {0xa0, 0xa1, 0xa2, 0xa3, 0xa4, 0xa5}, // A0 A1 A2 A3 A4 A5
     {0xb0, 0xb1, 0xb2, 0xb3, 0xb4, 0xb5}, // B0 B1 B2 B3 B4 B5
     {0x4d, 0x3a, 0x99, 0xc3, 0x51, 0xdd}, // 4D 3A 99 C3 51 DD
@@ -52,8 +53,7 @@ byte knownKeys[NR_KNOWN_KEYS][MFRC522::MF_KEY_SIZE] =  {
     {0x58, 0x7e, 0xe5, 0xf9, 0x35, 0x0f}, // 58 7e e5 f9 35 0f
     {0xa0, 0x47, 0x8c, 0xc3, 0x90, 0x91}, // a0 47 8c c3 90 91
     {0x53, 0x3c, 0xb6, 0xc7, 0x23, 0xf6}, // 53 3c b6 c7 23 f6
-    {0x8f, 0xd0, 0xa4, 0xf2, 0x56, 0xe9}, // 8f d0 a4 f2 56 e9
-    {0xff, 0xff, 0xff, 0xff, 0xff, 0xff}  // FF FF FF FF FF FF
+    {0x8f, 0xd0, 0xa4, 0xf2, 0x56, 0xe9} // 8f d0 a4 f2 56 e9
 
 };
 
@@ -61,6 +61,9 @@ byte knownKeys[NR_KNOWN_KEYS][MFRC522::MF_KEY_SIZE] =  {
 byte uidByte_prev[10] ;
 
 int keyCounter = 0;
+
+byte block = 0;
+
 
 /*
  * Initialize.
@@ -95,42 +98,37 @@ boolean try_key(MFRC522::MIFARE_Key *key)
 {
     boolean result = false;
     byte buffer[18];
-    byte block = 0;
     MFRC522::StatusCode status;
 
-//    for (byte j = 0; j < 63; j++) {      
-      Serial.print(F("  ->  Authenticating using key A...  "));
-      status = mfrc522.PCD_Authenticate(MFRC522::PICC_CMD_MF_AUTH_KEY_A, block, key, &(mfrc522.uid));
-      if (status != MFRC522::STATUS_OK) {
-           Serial.print(F("PCD_Authenticate() failed: "));
-           Serial.println(mfrc522.GetStatusCodeName(status));
-          return false;
-      }
-  
-      // Read block
-      byte byteCount = sizeof(buffer);
-      status = mfrc522.MIFARE_Read(block, buffer, &byteCount);
-      if (status != MFRC522::STATUS_OK) {
-           Serial.print(F("MIFARE_Read() failed: "));
-           Serial.println(mfrc522.GetStatusCodeName(status));
-      }
-      else {
-          // Successful read
-          result = true;
-          Serial.print(F("Success with key:"));
-          dump_byte_array((*key).keyByte, MFRC522::MF_KEY_SIZE);
-          Serial.println();
-          
-          // Dump block data
-          Serial.print(F("Block ")); Serial.print(block); Serial.print(F(":"));
-          dump_byte_array(buffer, 16);
-          Serial.println();
-      }
-      Serial.println();
+    Serial.print(F("  ->  Authenticating using key A@block")); Serial.print(block); Serial.print(F(" ..."));
+    status = mfrc522.PCD_Authenticate(MFRC522::PICC_CMD_MF_AUTH_KEY_A, block, key, &(mfrc522.uid));
+    if (status != MFRC522::STATUS_OK) {
+         Serial.print(F("PCD_Authenticate() failed: "));
+         Serial.println(mfrc522.GetStatusCodeName(status));
+        return false;
+    }
 
-//      j++;
-      
-//    }
+    // Read block
+    byte byteCount = sizeof(buffer);
+    status = mfrc522.MIFARE_Read(block, buffer, &byteCount);
+    if (status != MFRC522::STATUS_OK) {
+         Serial.print(F("MIFARE_Read() failed: "));
+         Serial.println(mfrc522.GetStatusCodeName(status));
+    }
+    else {
+        // Successful read
+        result = true;
+        Serial.print(F("Success with key:"));
+        dump_byte_array((*key).keyByte, MFRC522::MF_KEY_SIZE);
+        Serial.println();
+        
+        // Dump block data
+        Serial.print(F("Block ")); Serial.print(block); Serial.print(F(":"));
+        dump_byte_array(buffer, 16);
+        Serial.println();
+    }
+    Serial.println();
+
 
     mfrc522.PICC_HaltA();       // Halt PICC
     mfrc522.PCD_StopCrypto1();  // Stop encryption on PCD
@@ -153,6 +151,7 @@ void loop() {
     // Print card info just if new!
     if (uidByte_prev[0] != mfrc522.uid.uidByte[0])  {
       keyCounter = 0;
+      block = 0;
       
       uidByte_prev[0] = mfrc522.uid.uidByte[0];
       
@@ -170,9 +169,7 @@ void loop() {
     }
         
 
-
-  
-    
+     
     // Try the known default keys
     MFRC522::MIFARE_Key key;
 
@@ -181,6 +178,7 @@ void loop() {
     for (byte i = 0; i < MFRC522::MF_KEY_SIZE; i++) {
         key.keyByte[i] = knownKeys[k][i];
     }
+    
 
     Serial.print ("Trying key: ");
     dump_byte_array((key).keyByte, MFRC522::MF_KEY_SIZE);
@@ -190,9 +188,22 @@ void loop() {
         // Found and reported on the key and block,
         // no need to try other keys for this PICC
         Serial.println("key found!!");
+        
+      block++;
+
+      //TODO It seems that it's needed to respawn the loop with the new sector pointed instead of force a force loop
+      for (block; block < 4*16; block++) {
+        //Serial.println(block);
+        try_key(&key);
+      }
+
+      block=0;
+      return;
+
+        
     }
     else {
-        delay(1000);                  // 1s 
+        delay(100);                  // 1s 
         keyCounter++;
         //Serial.println(keyCounter); 
     }
