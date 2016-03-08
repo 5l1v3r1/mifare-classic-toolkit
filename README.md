@@ -1,3 +1,32 @@
 # RFID-toolkit
 
 Set of tools needed to interact with RFID tags over arduino
+
+# Basic info about Mifare Clasic 1k
+
+## Keys
+```
+
+Each sector of a MIFARE Classic card has two authentication keys: key A and key B. These two keys together with access conditions are stored in the last block of each sector (the so-called sector trailer). The sector trailer looks like this:
+
++-----------------------------+--------------+----+-----------------------------+
+|  0 |  1 |  2 |  3 |  4 |  5 |  6 |  7 |  8 |  9 | 10 | 11 | 12 | 13 | 14 | 15 |
++-----------------------------+--------------+----+-----------------------------+
+|            Key A            | Access Conditions |            Key B            |
+|          (6 bytes)          |     (4 bytes)     |          (6 bytes)          |
++-----------------------------+--------------+----+-----------------------------+
+The access conditions define how you can access the blocks in the sector:
+
+the commands you can issue after authenticating with key A (read, write, value block operations),
+the commands you can issue after authenticating with key B (read, write, value block operations),
+if key B is used as an authentication key at all.
+Typical scenarios are:
+
+Authentication is only possible with key A. Key A has read-only access.
+Authentication is only possible with key A. Key A has read/write access.
+Authentication is possible with both keys. Key A has read-only access. Key B has read/write access.
+Authentication is possible with both keys. Key A and B have read-only access.
+You can find a full description of the possible access conditions in the MIFARE datasheet.
+
+```
+from http://stackoverflow.com/a/28051227
