@@ -49,6 +49,12 @@ b0b1b2b3b4b5
 000000000000 
 d3f7d3f7d3f7
 aabbccddeeff
+aabbccddeeff
+714c5c886e97
+587ee5f9350f
+a0478cc39091
+533cb6c723f6
+8fd0a4f256e9
 ```
 
 
@@ -56,3 +62,4 @@ aabbccddeeff
 
 * [A Practical Attack on the MIFARE Classic](http://arxiv.org/pdf/0803.2285.pdf)
 * [How to Crack Mifare Classic Cards](https://firefart.at/post/how-to-crack-mifare-classic-cards/)
+* [BlackHat 2014 - Hacking Mifare Classic Cards](https://www.blackhat.com/docs/sp-14/materials/arsenal/sp-14-Almeida-Hacking-MIFARE-Classic-Cards-Slides.pdf)
