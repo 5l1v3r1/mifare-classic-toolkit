@@ -57,6 +57,27 @@ a0478cc39091
 8fd0a4f256e9
 ```
 
+## Game rules
+
+```
+ * MIFARE Classic 1K (MF1S503x):
+ * 		Has 16 sectors * 4 blocks/sector * 16 bytes/block = 1024 bytes.
+ * 		The blocks are numbered 0-63.
+ * 		Block 3 in each sector is the Sector Trailer. See http://www.mouser.com/ds/2/302/MF1S503x-89574.pdf sections 8.6 and 8.7:
+ * 				Bytes 0-5:   Key A
+ * 				Bytes 6-8:   Access Bits
+ * 				Bytes 9:     User data
+ * 				Bytes 10-15: Key B (or user data)
+ * 		Block 0 is read-only manufacturer data.
+ * 		To access a block, an authentication using a key from the block's sector must be performed first.
+ * 		Example: To read from block 10, first authenticate using a key from sector 3 (blocks 8-11).
+ * 		All keys are set to FFFFFFFFFFFFh at chip delivery.
+ * 		Warning: Please read section 8.7 "Memory Access". It includes this text: if the PICC detects a format violation the whole sector is irreversibly blocked.
+ *		To use a block in "value block" mode (for Increment/Decrement operations) you need to change the sector trailer. Use PICC_SetAccessBits() to calculate the bit patterns.
+
+```
+, from https://github.com/miguelbalboa/rfid/blob/master/MFRC522.h
+
 
 ## References
 
