@@ -4,6 +4,10 @@ Set of tools needed to interact with RFID tags over arduino
 
 # Basic info about Mifare Clasic 1k
 
+## Memory layout
+
+![Mem layout](https://firefart.at/img/mifare/mifare_memory_layout_thumb.png)
+
 ## Keys
 ```
 
@@ -46,3 +50,9 @@ b0b1b2b3b4b5
 d3f7d3f7d3f7
 aabbccddeeff
 ```
+
+
+## References
+
+* [A Practical Attack on the MIFARE Classic](http://arxiv.org/pdf/0803.2285.pdf)
+* [How to Crack Mifare Classic Cards](https://firefart.at/post/how-to-crack-mifare-classic-cards/)
