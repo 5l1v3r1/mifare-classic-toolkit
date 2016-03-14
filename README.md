@@ -87,3 +87,4 @@ a0478cc39091
 * [mfoc](https://github.com/nfc-tools/mfoc.git)
 * [MIFARE Classic 1K - Mainstream contactless](http://www.mouser.com/ds/2/302/MF1S503x-89574.pdf)
 * [Cloning a MiFare classic 1k tag](https://pmo.io/blog/cloning-a-mifare-tag.html)
+* [Arduino MFRC522](http://www.nxp.com/documents/data_sheet/MFRC522.pdf)
